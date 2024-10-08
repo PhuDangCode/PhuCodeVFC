@@ -1,0 +1,128 @@
+CREATE TABLE news (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    date DATE,
+    image_url TEXT,
+    content TEXT
+);
+
+
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    description TEXT,
+    price NUMERIC(10, 2),
+    image_url TEXT
+);
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
+    first_char CHAR(1),
+    is_verified BOOLEAN DEFAULT FALSE,
+    verification_token VARCHAR(255)
+);
+
+
+CREATE TABLE videos (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    video_url TEXT
+);
+
+
+CREATE TABLE admin (
+    id SERIAL PRIMARY KEY,
+    account VARCHAR(255) UNIQUE,
+    password VARCHAR(255)
+);
+
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT,
+    product_id INT,
+    quantity INT,
+    notes TEXT,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (product_id) REFERENCES products (id)
+);
+
+CREATE TABLE teams (
+    id SERIAL PRIMARY KEY,
+    team_name VARCHAR(255),
+    logo_url TEXT
+);
+
+
+CREATE TABLE players (
+    id SERIAL PRIMARY KEY,
+    team_id INT,
+    player_name TEXT,
+    student_id TEXT,
+    player_number TEXT,
+    FOREIGN KEY (team_id) REFERENCES teams(id)
+);
+
+
+CREATE TABLE matches (
+    id SERIAL PRIMARY KEY,
+    team1_id INT,
+    team2_id INT,
+    team1_score INT DEFAULT 0,
+    team2_score INT DEFAULT 0,
+    match_status VARCHAR(50), -- 'live', 'full time', etc.
+    match_date TIMESTAMP,
+    FOREIGN KEY (team1_id) REFERENCES teams(id),
+    FOREIGN KEY (team2_id) REFERENCES teams(id)
+);
+
+CREATE TABLE rankings (
+    id SERIAL PRIMARY KEY,
+    team_id INT,
+    points INT DEFAULT 0,
+    goals_for INT DEFAULT 0,
+    goals_against INT DEFAULT 0,
+    goal_difference INT GENERATED ALWAYS AS (goals_for - goals_against) STORED,
+    rank_position INT,
+    group_id INT,
+    matchs_played INT,
+    FOREIGN KEY (group_id) REFERENCES groups(id),
+    FOREIGN KEY (team_id) REFERENCES teams(id)
+);
+
+CREATE TABLE groups (
+    id SERIAL PRIMARY KEY,
+    group_name VARCHAR(255)
+);
+
+CREATE TABLE top_scorers (
+    player_id INT PRIMARY KEY,
+    goals INT DEFAULT 0,
+    FOREIGN KEY (player_id) REFERENCES players(id)
+);
+
+
+CREATE TABLE top_assists (
+    player_id INT PRIMARY KEY,
+    assists INT DEFAULT 0,
+    FOREIGN KEY (player_id) REFERENCES players(id)
+);
+
+CREATE TABLE yellow_cards (
+    player_id INT PRIMARY KEY,
+    card_count INT DEFAULT 0,
+    FOREIGN KEY (player_id) REFERENCES players(id)
+);
+
+CREATE TABLE red_cards (
+    player_id INT PRIMARY KEY,
+    card_count INT DEFAULT 0,
+    FOREIGN KEY (player_id) REFERENCES players(id)
+);
+
+
+
+
